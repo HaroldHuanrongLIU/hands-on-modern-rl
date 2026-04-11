@@ -4,6 +4,35 @@
 
 为什么不用 Atari？Atari 需要图像预处理（裁剪、灰度化、帧堆叠）和 CNN 网络，这些额外的工程细节会分散注意力。CartPole 的输入是 4 维向量，一个简单的 MLP 就能处理，让我们把精力集中在 DQN 算法本身。等理解了 CartPole 上的 DQN，迁移到 Atari 只需要换网络结构和预处理流程。
 
+## CartPole 长什么样？
+
+在动手写代码之前，让我们先看看 CartPole 的问题到底长什么样。一根杆子铰接在小车上，杆子初始时接近直立。你可以控制小车向左或向右施加推力。目标很简单：让杆子尽可能久地保持直立不倒。
+
+```
+训练前（Episode 1）               训练后（Episode 300）
+
+    |  ← 杆子立刻倒下                |||||||  ← 杆子稳稳直立
+    |                               |||||||
+   /                               |||||||
+  ┌───┐                            ┌───┐
+  │   │  ← 小车乱动                │   │ ← 小车精准微调
+──┴───┴──                        ──┴───┴──
+─────────────                    ────────────
+
+奖励：9.4 步就倒下                 奖励：500 步（满分）
+```
+
+CartPole 的状态有 4 个维度，你不需要理解物理细节，只需要知道它们描述了"杆子此刻有多歪、小车在哪里"：
+
+| 状态分量 | 符号 | 含义 | 直觉 |
+|----------|------|------|------|
+| 小车位置 | $x$ | 小车在轨道上的水平位置 | "车在轨道中间还是偏了" |
+| 小车速度 | $\dot{x}$ | 小车的水平移动速度 | "车在往哪边溜" |
+| 杆子角度 | $\theta$ | 杆子偏离竖直方向的角度 | "杆子歪了多少" |
+| 杆子角速度 | $\dot{\theta}$ | 角度的变化速率 | "杆子在往哪边倒、倒得多快" |
+
+每个时间步，智能体只能做一个选择——向左推或者向右推。杆子保持直立每步得 +1 分，杆子倒下（角度超过 $\pm 12°$）或者小车滑出屏幕就游戏结束。满分 500——意味着杆子稳稳立了 500 步。
+
 ## 完整代码：从零实现 DQN
 
 下面是完整的 DQN 实现，大概 150 行代码。我们会分几段来写，每段配有详细解读。
@@ -238,6 +267,98 @@ Episode 300/300 | 最近50轮平均奖励: 465.2 | ε: 0.010
 ```
 
 训练过程展现出典型的 DQN 学习曲线：前 50 轮平均奖励很低（~22），智能体几乎无法保持平衡。然后随着探索逐渐减少、经验回放池中积累的经验越来越多，性能开始稳步上升。200 轮左右突破 300 分，300 轮时接近满分。最终测试得分为 500——CartPole 的最高分，意味着杆子在 500 步内完全没有倒下。
+
+## 可视化：画出训练曲线
+
+训练日志里的数字太抽象了，让我们把 reward 曲线画出来。在训练循环结束后加入以下代码：
+
+```python
+import matplotlib.pyplot as plt
+
+# ==========================================
+# 6. 绘制训练曲线
+# ==========================================
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+# 左图：每轮总奖励（灰色散点 + 滑动平均红线）
+axes[0].plot(reward_history, color='lightgray', alpha=0.6, label='每轮奖励')
+window = 20
+if len(reward_history) >= window:
+    moving_avg = [np.mean(reward_history[max(0, i-window):i+1])
+                  for i in range(len(reward_history))]
+    axes[0].plot(moving_avg, color='red', linewidth=2, label=f'{window}轮滑动平均')
+axes[0].set_xlabel('Episode')
+axes[0].set_ylabel('Total Reward')
+axes[0].set_title('DQN 训练曲线（CartPole）')
+axes[0].legend()
+axes[0].axhline(y=500, color='green', linestyle='--', alpha=0.5, label='满分 500')
+
+# 右图：ε 衰减曲线
+epsilons = [agent.epsilon_end + (agent.epsilon_start - agent.epsilon_end) *
+            np.exp(-s / agent.epsilon_decay) for s in range(agent.steps_done)]
+axes[1].plot(epsilons, color='blue')
+axes[1].set_xlabel('Step')
+axes[1].set_ylabel('ε (探索率)')
+axes[1].set_title('ε-贪婪策略的衰减过程')
+axes[1].axhline(y=0.01, color='orange', linestyle='--', alpha=0.5, label='ε 下限 0.01')
+axes[1].legend()
+
+plt.tight_layout()
+plt.savefig('dqn_cartpole_training.png', dpi=150)
+plt.show()
+```
+
+你会看到这样一张图：
+
+```
+┌─────────────────────────────┐  ┌──────────────────────────┐
+│  DQN 训练曲线（CartPole）    │  │  ε-贪婪策略的衰减过程     │
+│                             │  │ 1.0 ┤╲                   │
+│ 500 ┤ ····满分线····         │  │     │  ╲                  │
+│     │              ╱━━━━━   │  │     │   ╲                 │
+│ 400 ┤           ╱━━         │  │     │    ╲                │
+│     │       ╱━━━            │  │     │     ╲___            │
+│ 200 ┤   ╱━━                 │  │     │         ╲_____      │
+│     │  ╱                    │  │ 0.01┤──────────────━━━━━━  │
+│  50 ┤╱····（散点很多波动）   │  │     └──────────────────── │
+│     └────────────────────── │  │      Step                  │
+│      Episode                │  │                            │
+└─────────────────────────────┘  └──────────────────────────┘
+```
+
+左图展示了一个典型的 DQN 学习过程：前 50 个 episode 的灰色散点在 10-30 分之间乱窜，智能体几乎无法保持平衡。然后红色滑动平均线开始爬升——这是经验回放池积累到足够数据、Q 值开始收敛的标志。约 200 episode 后曲线加速上升，最终趋近满分 500。
+
+右图展示了 $\varepsilon$ 的衰减过程：从一开始的 $\varepsilon \approx 1$（几乎纯随机探索），快速下降到 $\varepsilon \approx 0.01$（几乎纯利用）。注意 $\varepsilon$ 下降的速度很快——这意味着智能体在训练初期疯狂试错，收集各种经验填充回放池，然后迅速转向利用已学到的知识。这个"先探索后利用"的节奏，和人类学习新技能的过程很像。
+
+你也可以把训练好的智能体录制成 GIF 动画，直观地看到它从"乱推"到"精准微调"的进步：
+
+```python
+# ==========================================
+# 7. 录制训练前 vs 训练后的对比 GIF
+# ==========================================
+from gymnasium.utils.save_recording import save_as_gym_recording
+
+# 用训练好的智能体跑一局
+vis_env = gym.make("CartPole-v1", render_mode="rgb_array")
+frames = []
+state, _ = vis_env.reset()
+
+for _ in range(500):
+    frames.append(vis_env.render())
+    with torch.no_grad():
+        action = agent.q_net(torch.FloatTensor(state).unsqueeze(0)).argmax().item()
+    state, _, terminated, truncated, _ = vis_env.step(action)
+    if terminated or truncated:
+        break
+vis_env.close()
+
+# 保存为 GIF（需要 pip install imageio）
+import imageio
+imageio.mimsave('cartpole_trained.gif', frames, fps=30)
+print(f"已保存 {len(frames)} 帧到 cartpole_trained.gif")
+```
+
+这段代码会生成一个 `cartpole_trained.gif` 动画，你可以看到训练后的智能体如何通过持续的微小推力调整，让杆子始终保持在直立状态。
 
 这个学习过程和第 1 章用 SB3 的 PPO 看到的现象本质上是一样的——只是现在你能看到每一个零件在做什么。经验回放池里的每一条经验长什么样？目标网络多久更新一次？Q 值是怎么从随机噪声变成有意义的评估？这些在第 1 章都是黑盒，现在全部透明。
 

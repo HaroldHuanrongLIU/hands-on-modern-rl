@@ -112,15 +112,11 @@ const zhSidebar = {
           collapsed: false,
           items: [
             { text: '章节导览', link: '/chapter03_mdp/intro' },
-            { text: '动手：猜硬币游戏', link: '/chapter03_mdp/coin-game' },
+            { text: '动手：两台老虎机', link: '/chapter03_mdp/bandit' },
             { text: 'MDP 形式化与价值函数', link: '/chapter03_mdp/formalism' },
             {
               text: '贝尔曼方程与 TD Error',
               link: '/chapter03_mdp/bellman-equation'
-            },
-            {
-              text: '从表格到神经网络',
-              link: '/chapter03_mdp/tabular-to-deep'
             },
             { text: '经典方法与路线图', link: '/chapter03_mdp/classic-methods' }
           ]
@@ -133,6 +129,8 @@ const zhSidebar = {
             { text: '从 Q-Learning 到 DQN', link: '/chapter04_dqn/from-q-to-dqn' },
             { text: 'DQN 三大组件', link: '/chapter04_dqn/dqn-components' },
             { text: '动手：DQN 玩 CartPole', link: '/chapter04_dqn/cartpole-dqn' },
+            { text: '动手：从像素学玩 Atari', link: '/chapter04_dqn/atari-dqn' },
+            { text: '动手：3D 第一人称 ViZDoom', link: '/chapter04_dqn/vizdoom-dqn' },
             { text: '观察训练过程', link: '/chapter04_dqn/training-analysis' },
             { text: 'DQN 家族与视角迁移', link: '/chapter04_dqn/dqn-family' }
           ]
@@ -181,7 +179,11 @@ const zhSidebar = {
       items: [
         {
           text: '第9章：连续动作控制 (SAC/TD3)',
-          link: '/chapter09_continuous_control/intro'
+          collapsed: false,
+          items: [
+            { text: '章节导览', link: '/chapter09_continuous_control/intro' },
+            { text: '动手：PyBullet 机器人仿真', link: '/chapter09_continuous_control/pybullet-hands-on' }
+          ]
         },
         { text: '第10章：RLHF 完整流水线', link: '/chapter10_rlhf/intro' },
         { text: '第11章：VLM 强化学习', link: '/chapter11_vlm_rl/intro' },

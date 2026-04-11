@@ -85,44 +85,44 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://walkinglabs.github.io/hands-on-modern-rl/chapter03_mdp/bandit/</loc>
+    <lastmod>2026-04-11T09:33:50.906Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://walkinglabs.github.io/hands-on-modern-rl/chapter03_mdp/bellman-equation/</loc>
-    <lastmod>2026-04-11T07:05:13.383Z</lastmod>
+    <lastmod>2026-04-11T09:38:06.799Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://walkinglabs.github.io/hands-on-modern-rl/chapter03_mdp/classic-methods/</loc>
-    <lastmod>2026-04-11T07:05:13.401Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://walkinglabs.github.io/hands-on-modern-rl/chapter03_mdp/coin-game/</loc>
-    <lastmod>2026-04-11T06:22:46.191Z</lastmod>
+    <lastmod>2026-04-11T09:41:17.822Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://walkinglabs.github.io/hands-on-modern-rl/chapter03_mdp/formalism/</loc>
-    <lastmod>2026-04-11T07:05:13.442Z</lastmod>
+    <lastmod>2026-04-11T09:35:58.171Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://walkinglabs.github.io/hands-on-modern-rl/chapter03_mdp/intro/</loc>
-    <lastmod>2026-04-11T07:05:13.448Z</lastmod>
+    <lastmod>2026-04-11T09:41:52.249Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://walkinglabs.github.io/hands-on-modern-rl/chapter03_mdp/tabular-to-deep/</loc>
-    <lastmod>2026-04-11T05:52:27.009Z</lastmod>
+    <loc>https://walkinglabs.github.io/hands-on-modern-rl/chapter04_dqn/atari-dqn/</loc>
+    <lastmod>2026-04-11T09:43:22.031Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://walkinglabs.github.io/hands-on-modern-rl/chapter04_dqn/cartpole-dqn/</loc>
-    <lastmod>2026-04-11T07:48:59.648Z</lastmod>
+    <lastmod>2026-04-11T09:18:57.368Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -153,6 +153,12 @@
   <url>
     <loc>https://walkinglabs.github.io/hands-on-modern-rl/chapter04_dqn/training-analysis/</loc>
     <lastmod>2026-04-11T09:04:50.216Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://walkinglabs.github.io/hands-on-modern-rl/chapter04_dqn/vizdoom-dqn/</loc>
+    <lastmod>2026-04-11T10:21:15.464Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -207,6 +213,12 @@
   <url>
     <loc>https://walkinglabs.github.io/hands-on-modern-rl/chapter09_continuous_control/intro/</loc>
     <lastmod>2026-04-11T03:25:45.302Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://walkinglabs.github.io/hands-on-modern-rl/chapter09_continuous_control/pybullet-hands-on/</loc>
+    <lastmod>2026-04-11T09:42:50.224Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
