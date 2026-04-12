@@ -1,4 +1,4 @@
-# 附录 E. 强化学习游戏项目
+# 附录 D：强化学习经典项目
 
 以下是 30 个强化学习玩游戏的里程碑论文/项目，按时间排序：
 
@@ -73,3 +73,60 @@
 | 28  | OpenSpiel │ 多种棋类/卡牌 │ 2019 │ DeepMind，Lanctot 等人。RL 博弈框架，包含 20+ 种游戏                                                               |
 | 29  | Hide-and-Seek (Multi-Agent Emergence) │ 捉迷藏 │ 2019 │ OpenAI，Baker 等人。多智能体涌现复杂策略（工具使用）                                          |
 | 30  | Multi-Agent RL in Video Games │ 综述 │ 2025 │ Li 等人，IEEE ToG 2025。全面综述 MARL 在 Rocket League、Doom、Minecraft、SC2、Dota2、HoK 等游戏中的应用 |
+
+---
+
+## RL 环境与工具
+
+以下是本课程涉及的仿真环境和开发工具，按类型分类：
+
+| 环境/工具 | 类型 | 说明 | 相关章节 |
+| --------- | ---- | ---- | -------- |
+| **Gymnasium** | 通用 RL 环境 | OpenAI Gym 的继任者，CartPole、LunarLander 等经典环境 | Ch1, Ch3-Ch6 |
+| **Atari (ALE)** | 游戏环境 | 57 款 Atari 2600 游戏，DQN 系列论文标准基准 | Ch4 |
+| **PyBullet** | 物理仿真 | 开源机器人仿真，Ant、HalfCheetah 等 | Ch9 |
+| **MuJoCo** | 物理仿真 | 高精度物理引擎，连续控制标准基准 | Ch9 |
+| **Isaac Lab** | GPU 并行仿真 | NVIDIA Isaac Gym 继任者，万级机器人并行训练 | Ch9, Ch13 |
+| **Unity ML-Agents** | 3D 游戏 RL | Unity 引擎中的 RL 训练工具箱，支持 3D 空间推理 | 附录 |
+| **Stable-Baselines3** | 算法库 | 封装好的 DQN/PPO/SAC 等算法实现 | Ch1, Ch4-Ch6 |
+| **PettingZoo** | 多智能体环境 | 多智能体版 Gymnasium，支持合作/竞争场景 | Ch13 |
+| **ViZDoom** | FPS 3D 环境 | 第一人称射击游戏，部分可观察 | Ch4 |
+| **Stable-Retro** | 经典游戏 | 1000+ 款复古游戏的 Gym 封装 | Ch4 |
+| **MineRL** | Minecraft | Minecraft 环境 + 人类示范数据集 | 附录 |
+| **MiniGrid** | 网格世界 | 轻量级 GridWorld，研究样本效率 | 附录 |
+
+### Unity ML-Agents 入门
+
+Unity ML-Agents 是一个独特的 RL 工具包——它让训练直接在 3D 游戏引擎中进行。与 Gymnasium 的 2D 网格或 PyBullet 的纯物理仿真不同，ML-Agents 提供完整的 3D 空间（遮挡、透视、重力、碰撞），适合研究视觉导航和空间推理。
+
+**典型使用场景**：
+
+```python
+# Unity ML-Agents 与 Gymnasium 接口兼容
+from mlagents_envs.environment import UnityEnvironment
+
+# 加载预构建的 Unity 环境（3D 平台跳跃）
+env = UnityEnvironment(file_name="3DBall")
+
+# ML-Agents 使用自己的 API，但可以包装为 Gymnasium 接口
+from mlagents_envs.gym_utils import UnityToGymWrapper
+gym_env = UnityToGymWrapper(env)
+
+# 之后就可以用 Stable-Baselines3 训练
+from stable_baselines3 import PPO
+model = PPO("MlpPolicy", gym_env)
+model.learn(total_timesteps=100000)
+```
+
+**经典 ML-Agents 环境示例**：
+
+| 环境 | 任务类型 | 难度 | 适合练习 |
+| ---- | -------- | ---- | -------- |
+| 3DBall | 平衡控制 | 入门 | 理解连续动作空间 |
+| Crawler | 四足行走 | 中等 | 连续控制 + 多关节协调 |
+| Walker | 二足行走 | 中等 | 对比 PyBullet 的 Walker2d |
+| PushBlock | 推方块 | 入门 | 目标条件 RL |
+| FoodCollector | 收集食物 | 中等 | 多目标 + 导航 |
+| HideAndSeek | 多智能体捉迷藏 | 高级 | 多智能体涌现行为 |
+
+安装和环境获取方式参见[附录环境安装](../appendix_env_install/intro)。
