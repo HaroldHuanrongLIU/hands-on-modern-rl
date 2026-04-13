@@ -80,7 +80,6 @@ const zhSidebar = {
     {
       text: '前言',
       items: [
-        { text: '环境与硬件要求', link: '/preface/hardware-requirements' },
         { text: '写在开头', link: '/preface/intro' },
         { text: '强化学习简史', link: '/preface/brief-history' }
       ]
