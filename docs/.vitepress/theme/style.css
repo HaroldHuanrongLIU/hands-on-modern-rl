@@ -237,6 +237,11 @@ html:not(.dark)[data-ct-theme='gray'] {
   max-width: 100% !important;
 }
 
+.VPDoc.has-aside .content {
+  /* For screens where the aside is visible, we need to leave space for it (256px max width of aside) */
+  max-width: calc(100% - 256px) !important;
+}
+
 .VPDoc .content-container {
   max-width: 100% !important;
 }
