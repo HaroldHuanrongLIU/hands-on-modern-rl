@@ -165,4 +165,4 @@ RL 训练后的生成模型通常比原始模型更"聪明"（更懂用户意图
 - Wu X, et al. "[Human Preference Score v2: A Benchmark for Evaluating Human Preferences of Text-to-Image Synthesis](https://arxiv.org/abs/2306.09341)." NeurIPS 2023. —— HPS v2，大规模人类偏好评分数据集和 reward model。
 - Kirstain S, et al. "[Pick-a-Pic: Open Dataset of Human Preferences for Text-to-Image Generation](https://arxiv.org/abs/2305.01569)." NeurIPS 2023. —— 人类对生成图像的偏好数据集，用于训练 reward model。
 - Girdhar R, et al. "[Emu Video: Factorizing Text-to-Video Generation by Explicit Image Conditioning](https://arxiv.org/abs/2311.10709)." ECCV 2024. —— 视频生成模型，涉及视频质量的多维度评估。
-- Li X, et al. "[Boosting Text-to-Video Generative Model with MLLMs Feedback](https://neurips.cc/virtual/2024/poster/96722)." NeurIPS 2024. —— 用多模态 LLM 反馈作为 reward model，通过 RL 微调视频生成模型。
+- Wu X, et al. "[Boosting Text-to-Video Generative Model with MLLMs Feedback](https://neurips.cc/virtual/2024/poster/96722)." NeurIPS 2024. —— 用多模态 LLM 反馈作为 reward model，通过 RL 微调视频生成模型。

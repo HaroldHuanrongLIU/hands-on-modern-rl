@@ -370,7 +370,7 @@ LLM 多智能体 RL 把传统 MARL 的框架和 LLM 时代的实际需求结合�
 
 [^sage]: Peng Y, et al. "[SAGE: Multi-Agent Self-Evolution for LLM Reasoning](https://arxiv.org/abs/2603.15255)." 2025. —— 闭环自进化多智能体框架。
 
-[^marti]: Zhang K, Tian K, et al. "[MARTI: A Framework for Multi-Agent LLM Systems Reinforced Training and Inference](https://openreview.net/forum?id=E7jZqo0A50)." ICLR 2026. —— 多智能体辩论框架。[GitHub](https://github.com/zhiminyu/MARTI)
+[^marti]: Zhang K, Tian K, et al. "[MARTI: A Framework for Multi-Agent LLM Systems Reinforced Training and Inference](https://openreview.net/forum?id=E7jZqo0A50)." ICLR 2026. —— 多智能体 RL 训练与推理框架。[GitHub](https://github.com/TsinghuaC3I/MARTI)
 
 - Zhang G, et al. "[The Landscape of Agentic Reinforcement Learning for LLMs: A Survey](https://arxiv.org/abs/2509.02547)." 2025. —— Agentic RL 综述，包含多智能体协作板块。
 - Li J, et al. "[FlexMARL: Rollout-Training Co-Design for Efficient LLM-Based Multi-Agent Reinforcement Learning](https://arxiv.org/abs/2602.09578)." 2026. —— 首个联合优化采样、训练及编排的端到端多智能体框架。
