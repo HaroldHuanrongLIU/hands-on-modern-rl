@@ -152,7 +152,7 @@ graph TD
     AC --> PPO["PPO（第 6 章）<br/>← 你刚用的就是这个"]
 
     PPO --> LLM["LLM 对齐"]
-    LLM --> DPOG["DPO（第 7 章）<br/>← 第 2 章要用的"]
+    LLM --> DPOG["DPO（第 8 章）<br/>← 第 2 章要用的"]
     LLM --> GRPOG["GRPO（第 8 章）"]
 
     style ROOT fill:#f8f9fa,stroke:#24292f,color:#24292f
