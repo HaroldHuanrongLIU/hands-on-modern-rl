@@ -16,12 +16,12 @@ $$\nabla_\theta J \approx \nabla_\theta \log \pi_\theta(a_t|s_t) \cdot \delta$$
 
 这一替换带来的改变是根本性的：
 
-| | REINFORCE | Actor-Critic |
-|---|---|---|
+|          | REINFORCE                 | Actor-Critic                                           |
+| -------- | ------------------------- | ------------------------------------------------------ |
 | 优势估计 | $G_t$（MC，需要完整轨迹） | $\delta = r + \gamma V(s') - V(s)$（TD，走一步就更新） |
-| 更新时机 | episode 结束后 | 每走一步 |
-| 方差 | 高 | 低 |
-| 代价 | 无 | 需要训练 Critic |
+| 更新时机 | episode 结束后            | 每走一步                                               |
+| 方差     | 高                        | 低                                                     |
+| 代价     | 无                        | 需要训练 Critic                                        |
 
 ## 第二步：最好的基线是 $V(s)$
 
