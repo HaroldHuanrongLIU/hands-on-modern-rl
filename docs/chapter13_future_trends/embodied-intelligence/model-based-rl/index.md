@@ -1,4 +1,4 @@
-# 12.1.1 基于模型的 RL：从 Model-Free 到 Model-Based
+# 12.2 Model-Based RL：从 Model-Free 到 Model-Based
 
 <a id="article-start"></a>
 
@@ -679,7 +679,7 @@ MBRL 的核心风险是 **model bias**：世界模型如果错了，规划会利
 | 策略梯度与 Actor-Critic（第 5-6 章） | Dreamer 在想象轨迹上训练 actor 和 critic           |
 | PPO 的稳定训练（第 7 章）            | 具身 RL 常用 PPO 先在仿真中获得强基线              |
 | 具身智能（本节主文）                 | MBRL 解决真实交互昂贵、需要预测未来的问题          |
-| 离线 RL（第 12.4 节）                | 离线数据可用于预训练世界模型，再进行规划或策略优化 |
+| 离线 RL（第 12.5 节）                | 离线数据可用于预训练世界模型，再进行规划或策略优化 |
 
 ## 常见问题 QA
 

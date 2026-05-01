@@ -726,25 +726,22 @@ const zhSidebar = {
           items: [
             {
               text: '12.1 具身智能',
-              link: '/chapter13_future_trends/embodied-intelligence/',
-              collapsed: false,
-              items: [
-                {
-                  text: '12.1.1 基于模型的 RL',
-                  link: '/chapter13_future_trends/embodied-intelligence/model-based-rl/'
-                }
-              ]
+              link: '/chapter13_future_trends/embodied-intelligence/'
             },
             {
-              text: '12.2 Self-Play 与自进化',
+              text: '12.2 Model-Based RL',
+              link: '/chapter13_future_trends/embodied-intelligence/model-based-rl/'
+            },
+            {
+              text: '12.3 Self-Play 与自进化',
               link: '/chapter13_future_trends/self-play-outlook/'
             },
             {
-              text: '12.3 LLM 多智能体 RL',
+              text: '12.4 LLM 多智能体 RL',
               link: '/chapter13_future_trends/llm-multi-agent-rl/'
             },
             {
-              text: '12.4 离线强化学习',
+              text: '12.5 离线强化学习',
               link: '/chapter13_future_trends/offline-rl/'
             }
           ]

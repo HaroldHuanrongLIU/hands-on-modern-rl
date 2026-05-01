@@ -145,7 +145,7 @@ import deepspeed
 
 ## 延伸阅读：基于模型的 RL（MBRL）
 
-基于模型的 RL 已经拆成第 12 章具身智能下的独立子文章：[12.1.1 基于模型的 RL：从 Model-Free 到 Model-Based](../chapter13_future_trends/embodied-intelligence/model-based-rl/)。
+基于模型的 RL 已经拆成第 12 章的独立小节：[12.2 Model-Based RL：从 Model-Free 到 Model-Based](../chapter13_future_trends/embodied-intelligence/model-based-rl/)。
 
 这个主题更适合放在具身智能章节中展开：MBRL 的核心动机是减少真实交互、学习世界模型、在模型中做规划或想象训练，这些问题和机器人控制、Sim-to-Real、视频世界模型的关系更紧密。
 
