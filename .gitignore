@@ -17,6 +17,7 @@ CLAUDE.md
 !docs/appendix_industrial_training/images/*.png
 !docs/chapter13_future_trends/embodied-intelligence/model-based-rl/images/paper/*.png
 !docs/chapter13_future_trends/offline-rl/images/paper/*.png
+!docs/**/*.png
 code/**/output/
 code/**/*.zip
 code/**/dpo_results/
