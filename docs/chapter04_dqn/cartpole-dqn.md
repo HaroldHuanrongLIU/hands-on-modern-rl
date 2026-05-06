@@ -1,5 +1,37 @@
 # 4.3 动手：用 DQN 玩 CartPole
 
+## 本节导读
+
+**核心内容**
+
+- 用约 150 行 PyTorch 代码从零实现完整的 DQN，跑通 CartPole-v1 环境。
+- 手写 Q-Network（三层 MLP）、经验回放池（Replay Buffer）和目标网络（Target Network）三个核心组件。
+- 观察训练曲线从乱猜到满分的全过程，理解 $\varepsilon$ 衰减、经验积累和目标网络同步如何协同驱动学习。
+
+**核心公式**
+
+$$
+Q(s, a; \theta) \approx Q^*(s, a) \quad \text{（函数近似：用神经网络逼近最优动作价值）}
+$$
+
+$$
+\mathcal{L}(\theta) = \mathbb{E}\left[\left(r + \gamma \max_{a'} Q(s', a'; \theta^-) - Q(s, a; \theta)\right)^2\right] \quad \text{（DQN 损失函数：TD Target 与当前 Q 值的均方误差）}
+$$
+
+> **DQN 损失函数（DQN Loss）：**
+>
+> - $Q(s, a; \theta)$：Q-Network 对当前状态-动作对的 Q 值估计，网络参数为 $\theta$。
+> - $r + \gamma \max_{a'} Q(s', a'; \theta^-)$：TD Target，其中 $\theta^-$ 是目标网络的参数（不参与梯度更新，定期从 Q-Network 复制）。
+> - 整个损失衡量的是"Q-Network 的预测"和"目标网络给出的更稳定目标"之间的差距——这就是 DQN 用目标网络打破相关性、用经验回放池打破时序依赖的核心训练机制。
+
+$$
+\theta^- \leftarrow \theta \quad \text{（目标网络同步：定期将 Q-Network 参数复制到目标网络）}
+$$
+
+**为什么需要这些公式**
+
+前面两节我们理清了 DQN 的理论框架——Q-Network、经验回放、目标网络各自解决了什么问题。回顾一下：**Q-Network** 用神经网络替代 Q 表格，输入状态 $s$，输出每个动作的 $Q$ 值；**经验回放** 把每一步的经验 $(s, a, r, s')$ 存进缓冲区，训练时随机采样，打破相邻帧的相关性；**目标网络** 是 Q-Network 的慢更新副本，用来生成稳定的 TD Target，避免网络追着自己的尾巴跑。但理论归理论，"看懂"和"写出来"之间隔着一道鸿沟。本节的目标很简单：用公式 $Q(s,a;\theta) \approx Q^*(s,a)$ 作为蓝图，把约 150 行 PyTorch 代码一行行敲出来，亲手让 DQN 在 CartPole 上从"乱推"学到"满分"。你会看到损失函数里的 $\mathcal{L}(\theta)$ 怎么变成 `nn.MSELoss()`，经验回放池怎么变成 `deque(maxlen=10000)`，目标网络同步 $\theta^- \leftarrow \theta$ 怎么变成 `load_state_dict()`。跑通之后，DQN 就不再是纸上的公式，而是一台你能拆开、能调参、能理解每一步在干什么的机器。
+
 前面两节我们理清了 DQN 的理论框架和三个核心组件。现在让我们把它变成代码。我们选择 CartPole 作为实验环境——和第 1 章不同的是，当时我们用 Stable Baselines3 的黑盒 `PPO("MlpPolicy", env)` 一行完成训练，无需了解内部实现。现在，我们要用从第 3 章一路学来的知识，亲手搭建 DQN 的每一个组件。
 
 为什么不用 Atari？Atari 需要图像预处理（裁剪、灰度化、帧堆叠）和 CNN 网络，这些额外的工程细节会分散注意力。CartPole 的输入是 4 维向量，一个简单的 MLP 就能处理，让我们把精力集中在 DQN 算法本身。等理解了 CartPole 上的 DQN，迁移到 Atari 只需要换网络结构和预处理流程。
