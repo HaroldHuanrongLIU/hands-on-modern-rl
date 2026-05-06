@@ -1,8 +1,8 @@
 import json
 import os
 from datasets import Dataset
-from trl import DPOTrainer
-from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
+from trl import DPOTrainer, DPOConfig
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # 优先使用本地模型（由 0-download_model.py 下载）
 LOCAL_MODEL_DIR = "./Qwen2.5-0.5B-Instruct"
@@ -41,21 +41,21 @@ tokenizer.pad_token = tokenizer.eos_token
 # ==========================================
 # 3. 配置训练参数与 DPOTrainer
 # ==========================================
-training_args = TrainingArguments(
+training_args = DPOConfig(
     output_dir="./output/dpo_results",
     per_device_train_batch_size=2,
     learning_rate=1e-5,
     num_train_epochs=3,   # 这里可以调大以加深学习效果
     logging_steps=5,      # 打印日志的频率
     save_steps=20,        # 模型保存频率
+    beta=0.1,             # KL 惩罚系数（trl 1.x 起属于 DPOConfig）
 )
 
 trainer = DPOTrainer(
     model=model,
     args=training_args,
     train_dataset=train_dataset,
-    tokenizer=tokenizer,
-    beta=0.1,  # KL惩罚系数，控制模型偏离参考模型（Reference Model）的程度
+    processing_class=tokenizer,  # trl 1.x 将 tokenizer 重命名为 processing_class
 )
 
 # ==========================================
