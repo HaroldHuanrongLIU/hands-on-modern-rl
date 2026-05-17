@@ -1891,7 +1891,7 @@ export default defineConfig({
     }
   },
   themeConfig: {
-    logo: '/readme/logo.png',
+    logo: '/readme/logo-symbol.svg',
     siteTitle: 'Hands-on Modern RL',
     nav: zhNav,
     sidebar: zhSidebar,
