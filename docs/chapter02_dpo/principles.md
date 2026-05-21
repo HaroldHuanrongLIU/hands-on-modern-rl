@@ -161,7 +161,7 @@ $$\mathcal{L}_{DPO} = -\ln \sigma \left( \beta \ln \frac{\pi_\theta(y_w | x)}{\p
 
 Rafailov 等人（2023）发现，在这个 KL 约束下求解最优策略，会得到一个简洁的关系：
 
-$$ r(x, y) \propto \log \frac{\pi*\theta(y | x)}{\pi*{ref}(y | x)} $$
+$$ r(x, y) \propto \log \frac{\pi_{\theta}(y | x)}{\pi_{ref}(y | x)} $$
 
 即一个回答的奖励分数 $r(x,y)$，正比于"当前模型给出这个回答的概率"与"原始模型给出这个回答的概率"之比的对数。这个关系不是近似的，而是数学上精确的。它意味着奖励分数可以直接从两个模型的概率比值中算出来，单独训练一个奖励模型不再是必需的——只需要保留原始模型 $\pi_{ref}$ 作为参照，比较训练中模型 $\pi_\theta$ 的概率变化即可。
 
