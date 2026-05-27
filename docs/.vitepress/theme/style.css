@@ -668,6 +668,21 @@ aside.VPSidebar:hover {
   opacity: 1;
 }
 
+@media (max-width: 959px) {
+  aside.VPSidebar {
+    background: rgba(255, 255, 255, 0.98) !important;
+    border-right: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 16px 0 40px rgba(15, 23, 42, 0.14);
+    opacity: 1;
+  }
+
+  .dark aside.VPSidebar {
+    background: rgba(18, 22, 31, 0.98) !important;
+    border-right-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 16px 0 40px rgba(0, 0, 0, 0.38);
+  }
+}
+
 /* Make sidebar footer stick to the bottom */
 .VPSidebar .curtain {
   display: none !important;
@@ -1503,13 +1518,19 @@ aside.VPSidebar:hover {
 }
 
 .katex-display > .katex {
-  display: inline-block;
+  display: block;
   max-width: 100%;
-  text-align: initial;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .katex-html {
   display: inline-block;
+}
+
+.katex-display > .katex > .katex-html {
+  display: block;
+  position: relative;
 }
 
 mjx-assistive-mml {
