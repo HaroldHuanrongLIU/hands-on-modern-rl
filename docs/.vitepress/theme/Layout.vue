@@ -663,8 +663,14 @@ function renderSidebarKatex() {
 function enhanceNavTitle() {
   if (typeof document === 'undefined') return
   const title = document.querySelector('.VPNavBar .title')
-  const titleText = title?.querySelector('span:last-of-type')
-  if (!titleText || titleText.dataset.ctEnhancedTitle === 'true') return
+  if (!title) return
+
+  if (title.tagName === 'A') {
+    title.href = withBase('/preface/intro')
+  }
+
+  const titleText = title.querySelector('span:last-of-type') || title
+  if (titleText.dataset.ctEnhancedTitle === 'true') return
 
   const text = titleText.textContent?.trim()
   if (text !== 'Hands on Modern RL') return
