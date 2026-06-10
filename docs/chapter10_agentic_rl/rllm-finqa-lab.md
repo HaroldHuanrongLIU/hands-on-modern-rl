@@ -210,11 +210,12 @@ GRPO 更新：
 git clone https://github.com/rllm-org/rllm.git
 cd rllm
 
-# 安装 FinQA 依赖
-uv pip install -r projects/finqa/requirements.txt
+# 安装 rLLM 与 FinQA cookbook
+uv pip install -e ".[tinker]"
+uv pip install --no-deps -e cookbooks/finqa
 
 # 下载并处理数据
-python -m projects.finqa.prepare_finqa_data
+python cookbooks/finqa/prepare_finqa_data.py
 ```
 
 数据准备脚本会完成几件事：
@@ -234,10 +235,19 @@ python -m vllm.entrypoints.openai.api_server \
   --dtype bfloat16
 ```
 
-再运行金融 Agent：
+再通过 rLLM CLI 跑评测：
 
 ```bash
-python -m projects.finqa.run_finqa
+# 设置OPENAI_API_KEY
+export OPENAI_API_KEY=sk-...
+
+rllm eval finqa \
+  --agent finqa \
+  --evaluator finqa \
+  --model rLLM/rLLM-FinQA-4B \
+  --base-url http://localhost:30000/v1 \
+  --split test \
+  --max-examples 20
 ```
 
 这一步的目标不是刷新成绩，而是检查三件事：模型能否稳定调用工具，SQLite 表是否正确加载，输出是否包含可解释的查表和计算过程。只要这一步能跑通，后面的训练才有意义。
@@ -249,19 +259,19 @@ python -m projects.finqa.run_finqa
 verl 后端训练 4B 模型：
 
 ```bash
-export OPENAI_API_KEY=...
-export PORTKEY_API_KEY=...
+export OPENAI_API_KEY=sk-...
 
-bash projects/finqa/train_finqa.sh
+uv pip install -e ".[verl]"
+bash scripts/install_megatron.sh <cu128|cu129|...>
+bash cookbooks/finqa/train_verl.sh
 ```
 
 tinker 后端可以用于 30B MoE 模型的 LoRA 训练：
 
 ```bash
-export OPENAI_API_KEY=...
-export PORTKEY_API_KEY=...
+export OPENAI_API_KEY=sk-...
 
-bash projects/finqa/train_finqa_tinker.sh
+bash cookbooks/finqa/train_tinker.sh
 ```
 
 如果是在个人机器或单卡环境中复现，建议不要直接追求官方完整训练。更合理的 mini 版是：
@@ -354,4 +364,4 @@ rLLM-FinQA 展示了 Agentic RL 在企业任务中的一个清晰样板：模型
 
 这一节的关键 takeaway 是：**Agentic RL 的难点不只是算法，而是把任务环境、工具、reward 和 benchmark 接成一个闭环**。金融 Agent 的价值在于它足够真实，又足够可控，适合作为从代码 RL 走向企业 Agent 后训练的第一站。
 
-[^rllm-finqa]: rLLM 官方案例页：[FinQA Financial Agent](https://docs.rllm-project.com/projects/finqa)，包含模型、数据、工具、训练命令和 benchmark 结果。
+[^rllm-finqa]: rLLM 官方案例页：[FinQA Financial Agent](https://docs.rllm-project.com/cookbooks/finqa)，包含模型、数据、工具、训练命令和 benchmark 结果。
