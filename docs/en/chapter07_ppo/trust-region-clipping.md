@@ -101,19 +101,27 @@ Elegant in theory, but difficult in practice. Solving this constrained optimizat
 
 ## PPO's Clipping Mechanism
 
-In 2017, Schulman proposed PPO (Proximal Policy Optimization) as an engineering approximation to TRPO: **instead of measuring policy distance precisely, $r_t$ is truncated directly** — constrained to the interval $[1-\varepsilon, 1+\varepsilon]$, with any value beyond the bounds clamped to the boundary.
+In 2017, Schulman proposed PPO (Proximal Policy Optimization). The previous section noted that TRPO's difficulty is the cost of precisely computing KL divergence, which requires the Hessian matrix. PPO's key insight: **since the goal is simply to keep the old and new policies "not too far apart," there is no need to measure the distance precisely — just bound the policy ratio $r_t$ directly.**
+
+Recall the definition of $r_t$: $r_t = \pi_\theta(a_t \mid s_t) / \pi_{\text{old}}(a_t \mid s_t)$. When $r_t = 1$, the new and old policies agree exactly on that action; the more $r_t$ deviates from 1, the larger the policy change. Therefore, constraining $r_t$ within $[1-\varepsilon, 1+\varepsilon]$ is equivalent to limiting the probability change of each action — a local, inexpensive approximation of the goal "policy distance must not be too large," requiring neither KL computation nor the Hessian.
 
 PPO's objective:
 
 $$L^{\text{CLIP}}(\theta) = \mathbb{E}_t \left[ \min \left( r_t(\theta) \cdot A_t, \; \text{clip}(r_t(\theta), 1-\varepsilon, 1+\varepsilon) \cdot A_t \right) \right]$$
 
-Using the 1.65 example from above ($\varepsilon = 0.2$, $A_t = 2$):
+Using the 1.65 example from above ($\varepsilon = 0.2$, $A_t = 2$). With $r_t = 1.65$, compute each term:
+
+**Unclipped term**: $r_t \cdot A_t = 1.65 \times 2 = 3.30$.
+
+**Clipped term**: since $r_t = 1.65 > 1 + \varepsilon = 1.2$, it exceeds the upper bound, so the clipping operation truncates $r_t$ to $1.2$. The clipped term is then $1.2 \times 2 = 2.40$.
+
+**Take the minimum**: $\min(3.30,\; 2.40) = 2.40$.
 
 | Term         | Computation                                          | Value      |
 | ------------ | ---------------------------------------------------- | ---------- |
 | Unclipped    | $r_t \cdot A_t = 1.65 \times 2$                      | $3.30$     |
 | Clipped      | $\text{clip}(1.65, 0.8, 1.2) \cdot 2 = 1.2 \times 2$ | $2.40$     |
-| $\min$ picks | —                                                    | **$2.40$** |
+| $\min$ picks | $\min(3.30,\; 2.40)$                                 | **$2.40$** |
 
 Clipping compresses the larger objective value (3.30) down to 2.40. The objective becomes constant in this interval — **its dependence on $\theta$ vanishes, and the policy is no longer encouraged to increase $\pi(a_1 \mid s)$ further.**
 

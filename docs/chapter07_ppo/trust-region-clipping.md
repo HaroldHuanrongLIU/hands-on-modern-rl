@@ -97,19 +97,27 @@ $\delta$ 通常取 0.01，即每次更新后策略的行为分布最多改变 1%
 
 ## PPO 裁剪机制
 
-2017 年，Schulman 提出 PPO（Proximal Policy Optimization），给出 TRPO 的工程近似方案：**不再精确测量策略距离，而是直接对 $r_t$ 进行截断**——将 $r_t$ 约束在 $[1-\varepsilon, 1+\varepsilon]$ 内，超出部分被截断至边界。
+2017 年，Schulman 提出 PPO（Proximal Policy Optimization）。上一节指出，TRPO 的困难在于精确计算 KL 散度需要 Hessian 矩阵，成本过高。PPO 的思路是：**既然目标是让新旧策略"不要差太远"，那就不必精确测量距离，直接限制策略比率 $r_t$ 即可**。
+
+回到 $r_t$ 的定义：$r_t = \pi_\theta(a_t\mid s_t) / \pi_{\text{old}}(a_t\mid s_t)$。当 $r_t = 1$ 时，新旧策略在该动作上完全一致；$r_t$ 偏离 1 越多，策略变化越大。因此，将 $r_t$ 约束在 $[1-\varepsilon, 1+\varepsilon]$ 内，等价于限制每个动作的概率变化幅度——这是对"策略距离不能太大"这一目标的局部、廉价近似，无需计算 KL 散度，也无需 Hessian。
 
 PPO 的目标函数：
 
 $$L^{\text{CLIP}}(\theta) = \mathbb{E}_t \left[ \min \left( r_t(\theta) \cdot A_t, \; \text{clip}(r_t(\theta), 1-\varepsilon, 1+\varepsilon) \cdot A_t \right) \right]$$
 
-用前文的 1.65 例子计算（取 $\varepsilon = 0.2$、$A_t = 2$）：
+用前文的 1.65 例子计算（取 $\varepsilon = 0.2$、$A_t = 2$）。已知 $r_t = 1.65$，逐项计算：
+
+**未裁剪项**：$r_t \cdot A_t = 1.65 \times 2 = 3.30$。
+
+**裁剪项**：由于 $r_t = 1.65 > 1 + \varepsilon = 1.2$，超出上界，裁剪操作将 $r_t$ 截断为 $1.2$。于是裁剪项 $= 1.2 \times 2 = 2.40$。
+
+**取最小值**：$\min(3.30,\; 2.40) = 2.40$。
 
 | 项        | 计算                                                 | 值         |
 | --------- | ---------------------------------------------------- | ---------- |
 | 未裁剪    | $r_t \cdot A_t = 1.65 \times 2$                      | $3.30$     |
 | 裁剪值    | $\text{clip}(1.65, 0.8, 1.2) \cdot 2 = 1.2 \times 2$ | $2.40$     |
-| $\min$ 取 | —                                                    | **$2.40$** |
+| $\min$ 取 | $\min(3.30,\; 2.40)$                                 | **$2.40$** |
 
 裁剪将较大的目标值（3.30）压缩至 2.40。此时目标函数在该区间内变为常数，**梯度对 $\theta$ 的依赖消失，不再鼓励继续增大 $\pi(a_1\mid s)$**。
 
