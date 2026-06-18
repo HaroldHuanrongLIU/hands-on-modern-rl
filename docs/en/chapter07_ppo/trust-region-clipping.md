@@ -164,33 +164,46 @@ A question remains, however: what if $r_t$ crosses the boundary in the **opposit
 
 ### The Role of the Minimum
 
-The clipping term already constrains $r_t$ within $[1-\varepsilon, 1+\varepsilon]$. Why is the outer $\min$ still necessary? The reason lies in the case of opposite-direction overshoot.
+The clipping term has zero gradient at both ends. How can the outer $\min$ guarantee that the overall objective has a non-zero gradient? More pointedly: $\min$ picks one of two candidates — **could it ever pick the zero-gradient clipped term and stall the policy?**
 
-Let $\varepsilon = 0.2$ (clipping interval $[0.8, 1.2]$) and $A_t = 2$ (a good action, so $r_t$ should increase). Suppose an update goes in the wrong direction: $r_t$ decreases to $0.5$, falling below the lower bound $0.8$. The two approaches now yield different outcomes:
+No. $\min$ always picks the **numerically smaller** of the two candidates, and the arithmetic structure of clip happens to make "smaller" equivalent to "gradient direction is correct". Verify case by case.
 
-| Approach                                | Objective value      | Gradient                              | Outcome                                   |
-| --------------------------------------- | -------------------- | ------------------------------------- | ----------------------------------------- |
-| Pure clip $\text{clip}(r_t,0.8,1.2)A_t$ | $0.8 \times 2 = 1.6$ | zero (objective is constant here)     | policy stalls, cannot return              |
-| $\min$ selects the unclipped $r_t A_t$  | $0.5 \times 2 = 1.0$ | nonzero, directed toward larger $r_t$ | policy pulled back into the safe interval |
+Fix $A_t > 0$ (so $r_t$ should increase) and examine the two out-of-bounds cases.
 
-$\min$ compares $1.6$ and $1.0$ and selects the smaller value, $1.0$ — the unclipped term. Its gradient points in the direction of increasing $r_t$, pushing the policy back inside the clipping interval. Under pure clipping, the objective is constant in this region, so the gradient is zero and the policy cannot return on its own.
+**Same-direction overshoot** ($r_t > 1+\varepsilon$). Clip truncates to $1+\varepsilon$:
 
-The four cases are summarized below:
+| Term      | Expression            | Value ($r_t=1.65$, $\varepsilon=0.2$, $A_t=2$) |
+| --------- | --------------------- | ---------------------------------------------- |
+| Unclipped | $r_t \cdot A_t$       | $1.65 \times 2 = 3.30$ (larger)                |
+| Clipped   | $(1+\varepsilon) A_t$ | $1.2 \times 2 = 2.40$ (smaller)                |
 
-| $A_t$ | $r_t$ position        | Update direction                     | $\min$ selects  | Result                           |
-| ----- | --------------------- | ------------------------------------ | --------------- | -------------------------------- |
-| $> 0$ | above $1+\varepsilon$ | consistent with $A_t$, out of bounds | clipped value   | update stops                     |
-| $< 0$ | below $1-\varepsilon$ | consistent with $A_t$, out of bounds | clipped value   | update stops                     |
-| $> 0$ | below $1-\varepsilon$ | **opposite to $A_t$**                | unclipped value | **pulled back to safe interval** |
-| $< 0$ | above $1+\varepsilon$ | **opposite to $A_t$**                | unclipped value | **pulled back to safe interval** |
+Since $r_t > 1+\varepsilon$ implies $r_t A_t > (1+\varepsilon) A_t$, $\min$ picks the clipped term — gradient zero. **As intended**: a good action has already overshot the tolerance; the update stops.
 
-**First two rows:** the update direction is consistent with $A_t$; only the magnitude is excessive and crosses the boundary. $\min$ selects the clipped value, the gradient becomes zero, and the update stops — identical to pure clipping.
+**Opposite-direction overshoot** ($r_t < 1-\varepsilon$). Clip truncates to $1-\varepsilon$:
 
-**Last two rows:** the update direction is opposite to $A_t$. For instance, $A_t > 0$ indicates $r_t$ should increase, yet $r_t$ has fallen below the lower bound $1-\varepsilon$. Pure clipping yields zero gradient here, leaving the policy unable to correct itself; $\min$ selects the unclipped value in these two rows, preserving a gradient that pushes $r_t$ back toward the safe interval.
+| Term      | Expression            | Value ($r_t=0.5$, $\varepsilon=0.2$, $A_t=2$) |
+| --------- | --------------------- | --------------------------------------------- |
+| Unclipped | $r_t \cdot A_t$       | $0.5 \times 2 = 1.0$ (smaller)                |
+| Clipped   | $(1-\varepsilon) A_t$ | $0.8 \times 2 = 1.6$ (larger)                 |
 
-**The role of $\min$ is to preserve a corrective gradient when the update direction is wrong, allowing the policy to return to the clipping interval.**
+Since $r_t < 1-\varepsilon$ implies $r_t A_t < (1-\varepsilon) A_t$, $\min$ picks the unclipped term. This term contains the true $r_t(\theta)$, so the chain rule gives a non-zero gradient pointing toward larger $r_t$:
 
-> Replacing $\min$ with $\max$ would cause the first two rows to "encourage further excursions beyond the boundary", entirely defeating the clipping mechanism. Therefore $\min$ is required.
+$$\nabla_\theta[r_t \cdot A_t] = A_t \cdot \nabla_\theta r_t = 2 \cdot \frac{\nabla_\theta \pi_\theta(a_t\mid s_t)}{0.6} = \tfrac{10}{3}\,\nabla_\theta \pi_\theta(a_t\mid s_t) \neq 0$$
+
+This is precisely the corrective signal that pulls the policy back into $[1-\varepsilon, 1+\varepsilon]$.
+
+The two cases for $A_t < 0$ follow by symmetry (both values negative; "smaller" means larger in magnitude, i.e. heavier penalty). The four out-of-bounds cases:
+
+| $A_t$ | $r_t$ position    | Magnitude relation    | $\min$ picks    | Gradient                | Design intent                 |
+| ----- | ----------------- | --------------------- | --------------- | ----------------------- | ----------------------------- |
+| $>0$  | $> 1+\varepsilon$ | unclipped $>$ clipped | clipped value   | zero (flat region)      | same-direction stop           |
+| $>0$  | $< 1-\varepsilon$ | unclipped $<$ clipped | unclipped value | nonzero, increase $r_t$ | opposite-direction correction |
+| $<0$  | $< 1-\varepsilon$ | unclipped $>$ clipped | clipped value   | zero (flat region)      | same-direction stop           |
+| $<0$  | $> 1+\varepsilon$ | unclipped $<$ clipped | unclipped value | nonzero, decrease $r_t$ | opposite-direction correction |
+
+Across all four cases, $\min$ consistently picks the **more pessimistic** (numerically smaller) candidate: same-direction overshoot makes clip cut the inflated reward, so the clipped value is more pessimistic; opposite-direction overshoot makes the unclipped value honestly expose that the reward really is low, so the unclipped value is more pessimistic. **"More pessimistic" coincides exactly with "gradient direction is correct"** — this is the fundamental reason $\min$ can guarantee a non-zero gradient whenever correction is needed (and only then).
+
+> Replacing $\min$ with $\max$ flips the rule to "pick the more optimistic": same-direction overshoot would no longer be cut (encouraging further excursions), and opposite-direction overshoot would have its reward inflated (rewarding the wrong direction). Both cases fail. $\min$ cannot be replaced by $\max$.
 
 ## Visualizing the Clipping Mechanism
 
