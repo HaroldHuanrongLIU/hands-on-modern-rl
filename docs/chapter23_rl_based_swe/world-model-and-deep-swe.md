@@ -1,4 +1,4 @@
-# 12.3 Code World Model 与 DeepSWE
+# 23.2 Code World Model 与 DeepSWE
 
 上一节我们看到 Meta SWE-RL 的核心瓶颈——**长 horizon 训练不稳定**。16 步以上的 trajectory，RL 的 credit assignment 难以学习。
 
@@ -251,7 +251,7 @@ def deep_swe_beam_search(issue, model, value_model, K=4):
     return beams[0]["state"]
 ```
 
-Beam Search 让 DeepSWE 在推理时多花算力换准确率——与 [第 10 章 Test-time Compute Scaling](../chapter19_reasoning/test-time-scaling) 一致。
+Beam Search 让 DeepSWE 在推理时多花算力换准确率——与 [第 19 章 Test-time Compute Scaling](../chapter19_reasoning/test-time-scaling) 一致。
 
 ## 12.3.4 工业实践的对比
 

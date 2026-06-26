@@ -1,6 +1,6 @@
-# 10.6 Hands-On: Building an Agentic RL Training System from Scratch
+# 22.7 Hands-On: Building an Agentic RL Training System from Scratch
 
-In Sections 10.1 and 10.2, we discussed the decision framework and environment interaction design for Agentic RL. In Sections 10.3 through 10.5, we analyzed the architectures of frameworks such as OpenRLHF, veRL, and Relax. This section starts from those discussions and turns the concepts into a runnable implementation.
+In Sections 22.1 and 10.2, we discussed the decision framework and environment interaction design for Agentic RL. In Sections 22.3 through 10.5, we analyzed the architectures of frameworks such as OpenRLHF, veRL, and Relax. This section starts from those discussions and turns the concepts into a runnable implementation.
 
 Specifically, we will train a language model agent that can autonomously solve programming problems: after reading a problem, it writes code, executes it, reads the output, and if errors occur, revises the code and re-executes until it produces a correct answer. The entire system is kept under 500 lines of code and runs on CPU.
 
@@ -206,7 +206,7 @@ Below we start from the most fundamental need of the Rollout phase — **isolate
 
 Where should the agent's generated code be executed? A natural idea is to run it directly in the training process. But if the agent writes an infinite loop like `while True: pass`, the entire training process hangs. Worse, the agent might generate malicious code that deletes files. Therefore, we need a mechanism to execute the agent's actions in an isolated environment while safely returning execution results to the agent.
 
-This isolated environment must satisfy three conditions: accept the agent's action (code), execute it safely with resource limits, and return the execution result and termination status. This is the responsibility of the **Environment** component, and it is the minimal implementation of the sandbox problem discussed in Section 10.2.
+This isolated environment must satisfy three conditions: accept the agent's action (code), execute it safely with resource limits, and return the execution result and termination status. This is the responsibility of the **Environment** component, and it is the minimal implementation of the sandbox problem discussed in Section 22.2.
 
 ```mermaid
 flowchart TD
@@ -304,15 +304,15 @@ class SandboxEnv:
 
 Design notes:
 
-- `step()` accepts a structured action (`action_type` + `action_args`), not raw text. This corresponds to the action space $A = A_{\text{text}} \cup A_{\text{action}}$ from Section 10.1.
-- `_exec_code()` uses subprocess isolation with a timeout to prevent infinite loops — the lightest sandbox approach discussed in Section 10.2.
+- `step()` accepts a structured action (`action_type` + `action_args`), not raw text. This corresponds to the action space $A = A_{\text{text}} \cup A_{\text{action}}$ from Section 22.1.
+- `_exec_code()` uses subprocess isolation with a timeout to prevent infinite loops — the lightest sandbox approach discussed in Section 22.2.
 - The return value includes `observation` (environment feedback) and `done` (termination status), corresponding to the POMDP observation function $O(s_t)$.
 
 ## Policy — Model Inference and Training
 
 The environment can execute code, but who decides what code to write? We need a Policy to generate actions. Here we use a 0.5B-parameter Qwen2.5 as the policy model.
 
-But a key question arises: this model is used both for generating code during rollout (inference) and for accepting gradient updates during training. How can the same weights support these two very different uses? This is the core problem discussed in Section 10.1 — we need to provide two interfaces for the same weights: one for inference generation and one for gradient updates.
+But a key question arises: this model is used both for generating code during rollout (inference) and for accepting gradient updates during training. How can the same weights support these two very different uses? This is the core problem discussed in Section 22.1 — we need to provide two interfaces for the same weights: one for inference generation and one for gradient updates.
 
 ```mermaid
 flowchart TD
@@ -706,7 +706,7 @@ class GRPOAgentTrainer:
         Note: this is simplified — all tokens participate in the loss.
         Production frameworks use loss masks to distinguish model-generated tokens
         (participate in loss) from environment-returned tokens (masked out).
-        See the loss mask discussion in Section 10.2.
+        See the loss mask discussion in Section 22.2.
         """
         parts = []
         for interaction in traj["interactions"]:
@@ -720,7 +720,7 @@ Design notes:
 
 - The main loop of `fit()` follows the "producer-consumer" pattern: RolloutWorker produces trajectories, Policy consumes them for gradient updates.
 - GRPO's within-group comparison is implemented in the Reward normalization section: for multiple trajectories sharing a prompt, advantage = (reward - mean) / std.
-- `_serialize_trajectory()` flattens multi-turn trajectories into text. This is simplified — production frameworks use loss masks to distinguish model-generated tokens from environment-returned tokens (see the loss mask discussion in Section 10.2).
+- `_serialize_trajectory()` flattens multi-turn trajectories into text. This is simplified — production frameworks use loss masks to distinguish model-generated tokens from environment-returned tokens (see the loss mask discussion in Section 22.2).
 
 ## Putting It All Together
 
@@ -839,4 +839,4 @@ Each gap represents an independent engineering optimization direction. After und
 
 ---
 
-This section implemented a minimal yet complete Agentic RL training system. Looking back at the entire process, its core structure can be summarized as: **nesting the Agent Loop (Section 10.1) and environment interaction (Section 10.2) inside a rollout → reward → train RL cycle**. All the complexity of production frameworks like Relax and veRL arises from scaling this skeleton to multi-node multi-GPU, high-throughput, long-running production environments.
+This section implemented a minimal yet complete Agentic RL training system. Looking back at the entire process, its core structure can be summarized as: **nesting the Agent Loop (Section 22.1) and environment interaction (Section 22.2) inside a rollout → reward → train RL cycle**. All the complexity of production frameworks like Relax and veRL arises from scaling this skeleton to multi-node multi-GPU, high-throughput, long-running production environments.

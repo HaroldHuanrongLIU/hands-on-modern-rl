@@ -1,6 +1,6 @@
-# 第 12 章 RL-based SWE 与 让模型自己学会修 Bug
+# 第 23 章 RL-based SWE 与 让模型自己学会修 Bug
 
-[第 10 章 Agentic RL](../chapter22_agentic/intro) 介绍了智能体在工具调用、多轮交互上的 RL 训练。这一章我们聚焦一个最有工业价值的细分领域：**RL-based SWE（Software Engineering）**——用 RL 训练模型自动修复 bug、实现 feature、写测试。
+[第 22 章 Agentic RL](../chapter22_agentic/intro) 介绍了智能体在工具调用、多轮交互上的 RL 训练。这一章我们聚焦一个最有工业价值的细分领域：**RL-based SWE（Software Engineering）**——用 RL 训练模型自动修复 bug、实现 feature、写测试。
 
 为什么单独成章？三个原因：
 
@@ -55,7 +55,7 @@
 这一章假定你已经读过：
 
 - [第 9 章 GRPO 改进家族](../chapter18_grpo/grpo-family)——基础 RL 算法
-- [第 10 章 Agentic RL](../chapter22_agentic/intro)——agent 的多轮交互基础
+- [第 22 章 Agentic RL](../chapter22_agentic/intro)——agent 的多轮交互基础
 - [第 11 章 PRM](../chapter20_prm_search/intro)——形式化 verifier 思想
 
 本章后续会指向：

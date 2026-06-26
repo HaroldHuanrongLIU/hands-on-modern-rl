@@ -1,8 +1,8 @@
 ---
-title: 10.14 Further Reading
+title: 22.14 Further Reading
 ---
 
-# 10.6 Agentic RL Extended Reading Index
+# 22.8 Agentic RL Extended Reading Index
 
 The first six sections of this chapter covered the core theory, engineering practice, and industrial case studies of Agentic RL. But the landscape of Agentic RL extends far beyond that. In 2025--2026, RL is being applied to an increasing range of agent scenarios: from role-playing to creative writing, from scientific discovery to empathetic dialogue. This page organizes over 120 representative works by theme for further exploration.
 

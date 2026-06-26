@@ -1,8 +1,8 @@
 ---
-title: 10.2 Tool Use, Trajectory Synthesis, and Agentic Engineering
+title: 22.2 Tool Use, Trajectory Synthesis, and Agentic Engineering
 ---
 
-# 10.2 Tool Use, Trajectory Synthesis, and Agentic Engineering
+# 22.2 Tool Use, Trajectory Synthesis, and Agentic Engineering
 
 This section merges the original topics of "trajectory synthesis and data engineering" and "tool use and Agentic engineering" into one engineering storyline. We first ask where the training data comes from, then discuss how a model learns tool-use policies, and finally land on the environment, sandboxing, asynchronous rollout, and reward-design problems that real training systems must solve.
 

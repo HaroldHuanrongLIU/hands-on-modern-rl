@@ -1,4 +1,4 @@
-# 12.2 Meta SWE-RL 与 开源 SOTA 的代表
+# 23.2 Meta SWE-RL 与 开源 SOTA 的代表
 
 [Meta SWE-RL](https://arxiv.org/abs/2502.18452)（2025.02）是开源 SWE-RL 的代表作。它的核心贡献是：
 

@@ -1,11 +1,11 @@
 ---
 search: false
-title: 10.10 Projects
+title: 22.10 Projects
 ---
 
 # Legacy Page: Project Practice (Split into Two Project Pages)
 
-> This page is kept as an entry point for legacy links. The core content has been moved to [10.4 rLLM DeepCoder Lab](./rllm-deepcoder-lab) and [10.5 Deep Research Agent](./deep-research-agent). The original material is preserved below so readers arriving through old links can compare it with the newer pages.
+> This page is kept as an entry point for legacy links. The core content has been moved to [22.4 rLLM DeepCoder Lab](./rllm-deepcoder-lab) and [22.5 Deep Research Agent](./deep-research-agent). The original material is preserved below so readers arriving through old links can compare it with the newer pages.
 
 # Project 1: Multi-Tool Agentic RL: Search Documentation, Write Code, Run Tests
 
@@ -1079,7 +1079,7 @@ The two models work together through self-play: the searcher locates information
 
 ## Evaluation: What Counts as a "Good" Deep Research Agent?
 
-> This section focuses on evaluation dimensions specific to Deep Research. For the broader Agentic evaluation system, including tool invocation, end-to-end tasks, benchmark landscape, and evaluation-system construction, see [Section 10.3: Industrial Practice, Evaluation, and Badcases](./industrial-evaluation).
+> This section focuses on evaluation dimensions specific to Deep Research. For the broader Agentic evaluation system, including tool invocation, end-to-end tasks, benchmark landscape, and evaluation-system construction, see [Section 22.3: Industrial Practice, Evaluation, and Badcases](./industrial-evaluation).
 
 A "good" Deep Research Agent is not defined only by final-answer correctness. A strong Deep Research result must satisfy four layers at the same time:
 
@@ -1244,7 +1244,7 @@ def report_reward(report, task, verified_facts=None):
     )
 ```
 
-For training, use **curriculum learning from short to long**: first train on 500-word short reports, then gradually increase to full 5,000-word reports. This matches the difficulty-adaptive idea of HardGen [^hardgen] in Section 10.2.
+For training, use **curriculum learning from short to long**: first train on 500-word short reports, then gradually increase to full 5,000-word reports. This matches the difficulty-adaptive idea of HardGen [^hardgen] in Section 22.2.
 
 ### Two-Stage RL for Deep Research
 
@@ -1575,7 +1575,7 @@ The minimal implementation above can verify that the whole training flow works. 
 1. **Real search API**: connect Tavily or Serper API and replace simulated search results.
 2. **More refined reward**: add citation-quality scoring and step-efficiency penalties, following [the reward-function design in this section](#how-to-design-reward-functions-from-simple-to-frontier).
 3. **Async concurrency**: use the async concurrent architecture from [Agentic engineering practice](./tool-use-agents) to accelerate rollout.
-4. **Trajectory synthesis**: pre-synthesize training data using the method from [Section 10.2](./tool-use-and-trajectory).
+4. **Trajectory synthesis**: pre-synthesize training data using the method from [Section 22.2](./tool-use-and-trajectory).
 5. **Full framework**: migrate to the DeepResearcher or rStar2-Agent framework for large-scale training.
 
 <details>
@@ -1586,7 +1586,7 @@ Reward design for Deep Research Agents is a synthesis of the RL methods discusse
 - **RLVR (Chapter 9)**: many Deep Research rewards are verifiable. Whether a citation URL is accessible, whether code passes tests, and whether the answer matches the gold answer are all objectively verifiable and do not require a Reward Model.
 - **GRPO (Chapter 9)**: projects such as DeepResearcher use group sampling and relative comparison for training, exactly the idea of GRPO.
 - **PPO (Chapter 7)**: some projects still use PPO as the base RL algorithm, especially when a value function is needed for step-level credit assignment.
-- **PRM vs ORM (Section 10.1)**: CaRR, Atom-Searcher, and Web-Shepherd are all, in essence, exploring the trade-off between ORM, which scores only the final result, and PRM, which evaluates each step, in the Deep Research setting. The research finding is that for long-horizon research tasks, dense signals from PRMs are crucial.
+- **PRM vs ORM (Section 22.1)**: CaRR, Atom-Searcher, and Web-Shepherd are all, in essence, exploring the trade-off between ORM, which scores only the final result, and PRM, which evaluates each step, in the Deep Research setting. The research finding is that for long-horizon research tasks, dense signals from PRMs are crucial.
 
 Deep Research Agent is an excellent setting that ties together all the RL knowledge in this book: from basic reward design to advanced credit assignment, from data synthesis to engineering implementation.
 

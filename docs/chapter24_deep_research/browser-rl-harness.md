@@ -1,4 +1,4 @@
-# 24.2 浏览器 RL 动作空间与 harness 工程
+# 24.1 浏览器 RL 动作空间与 harness 工程
 
 > [24.1](./intro) 介绍了 Deep Research 的任务定义和主流模型。但当你真正动手训练一个 Deep Research Agent 时，会立刻撞上两个工程问题：(1) **动作空间怎么设计**——浏览器有成百上千种操作，哪些该暴露给 agent？(2) **harness 怎么搭**——agent 生成的动作要落到真实浏览器上，需要一套完整的执行、监控、奖励计算环境。本节解决这两件事，给出可复现的工程模板。
 
@@ -17,13 +17,13 @@ $$\mathcal{M}_{\text{browser}} = (\mathcal{S}, \mathcal{A}, P, R, \gamma, T)$$
 
 与 [第 25 章 Computer Use](../chapter25_computer_use/intro) 的 GUI MDP 相比，Deep Research 的关键差异：
 
-| 维度 | Deep Research | Computer Use |
-|------|--------------|--------------|
-| 观察空间 | DOM 文本 / 截图 | 截图为主 |
-| 动作粒度 | 抽象（search / click_link / extract） | 原子（pixel click / key） |
-| 状态转移可预测性 | 较高（搜索结果相对稳定） | 低（GUI 动画、弹窗） |
-| 奖励稀疏度 | 极稀疏（最后一步） | 极稀疏（最后一步） |
-| 典型步数 | 20-50 | 50-500 |
+| 维度             | Deep Research                         | Computer Use              |
+| ---------------- | ------------------------------------- | ------------------------- |
+| 观察空间         | DOM 文本 / 截图                       | 截图为主                  |
+| 动作粒度         | 抽象（search / click_link / extract） | 原子（pixel click / key） |
+| 状态转移可预测性 | 较高（搜索结果相对稳定）              | 低（GUI 动画、弹窗）      |
+| 奖励稀疏度       | 极稀疏（最后一步）                    | 极稀疏（最后一步）        |
+| 典型步数         | 20-50                                 | 50-500                    |
 
 ## 动作空间设计 与 三种主流方案
 
@@ -40,11 +40,13 @@ ACTIONS = {
 ```
 
 这是 Search-R1、R1-Searcher 用的方案。优点：
+
 - 动作空间只有 3 个原子操作，易学
 - 每步观察是干净的 Markdown，不需要视觉模型
 - 工程简单，一个 `requests.get()` 搞定
 
 缺点：
+
 - 无法处理需要 JavaScript 的页面（SPA、动态加载）
 - 无法点击/滚动/翻页（只能取第一屏）
 - 不接近真实"上网研究"体验
@@ -69,11 +71,13 @@ ACTIONS = {
 ```
 
 这是 DeepResearcher、Tongyi DeepResearch 用的方案。优点：
+
 - 真实浏览器能力，能处理任意网页
 - 可截图作为视觉观察（用于 VLM agent）
 - 接近人类研究行为
 
 缺点：
+
 - 动作空间大（7-10 个），需要更多训练数据
 - 真实浏览器慢（每步 1-3 秒），训练成本高
 - CSS selector 失败率高（页面变化导致 selector 失效）
@@ -97,11 +101,13 @@ Agent action: click(3)  # 点击第一个搜索结果
 ```
 
 这是 BrowseComp 评测里多数 SOTA 系统用的方案。优点：
+
 - 动作空间退化为"选编号"，极简
 - 不依赖 CSS selector 的脆弱性
 - 兼容 VLM（看截图）和 LLM（看编号列表）
 
 缺点：
+
 - 需要 OCR / DOM 解析做编号（额外组件）
 - 编号错误的代价高（点错链接）
 
@@ -117,12 +123,12 @@ class BrowserEnv:
         self.mode = mode
         self.browser = None  # Playwright instance
         self.history = []    # 轨迹历史
-    
+
     def reset(self, query: str) -> Observation:
         """开始新 trajectory，返回初始观察"""
         self.history = [{'role': 'user', 'content': query}]
         return self._get_obs()
-    
+
     def step(self, action: Action) -> Tuple[Observation, float, bool, dict]:
         """执行动作，返回 (next_obs, reward, done, info)"""
         # 1. 解析 action
@@ -134,6 +140,7 @@ class BrowserEnv:
 ```
 
 **关键工程点**：
+
 - **超时处理**：真实网页可能 hang，必须有 timeout（通常 10 秒）
 - **错误恢复**：CSS selector 失败、网络断开、JS 报错——都要捕获并返回友好的 error obs
 - **状态持久化**：Cookie / Session 跨步骤保留（否则登录态丢失）
@@ -142,7 +149,7 @@ class BrowserEnv:
 
 LLM 输出的是文本，需要解析成结构化 action：
 
-```python
+````python
 def parse_action(output: str, mode: str) -> Action:
     """从 LLM 输出解析 action，失败时返回 NoOp"""
     try:
@@ -158,9 +165,10 @@ def parse_action(output: str, mode: str) -> Action:
     except ParseError as e:
         # 解析失败：返回错误观察，让 agent 重试
         return ErrorAction(f"Parse failed: {e}")
-```
+````
 
 **关键工程点**：
+
 - **格式容错**：LLM 输出经常有格式错误，parser 要 robust
 - **重试机制**：解析失败时返回 error obs，让 agent 自纠错（这是 emergent behavior 的重要来源）
 - **动作白名单**：禁止危险动作（如 `format_disk`、`rm -rf`），即使 agent 想做
@@ -187,6 +195,7 @@ class RewardVerifier:
 ```
 
 **关键工程点**：
+
 - **奖励稀疏化缓解**：可加过程奖励（PRM）作为辅助，但主奖励仍是端到端
 - **LLM-as-Judge 偏置**：用 GPT-4 / Claude 做 judge 时有已知偏置（长答案偏好、自身风格偏好），需要校准
 - **反作弊**：检测 agent 是否"复述问题"或"拼接搜索摘要"等作弊策略
@@ -208,6 +217,7 @@ class RewardVerifier:
 ```
 
 这个文件有两个用途：
+
 1. **训练 debug**：失败 trajectory 一眼看出哪步错
 2. **数据合成**：成功 trajectory 可作为 SFT 数据
 
@@ -220,7 +230,7 @@ async def parallel_rollout(
     agent, prompts: list[str], num_parallel: int = 256
 ) -> list[Trajectory]:
     semaphore = asyncio.Semaphore(num_parallel)
-    
+
     async def rollout_one(prompt):
         async with semaphore:
             env = BrowserEnv(mode='playwright')
@@ -234,11 +244,12 @@ async def parallel_rollout(
                     break
                 obs = next_obs
             return trajectory
-    
+
     return await asyncio.gather(*[rollout_one(p) for p in prompts])
 ```
 
 **关键工程点**：
+
 - **浏览器池**：复用浏览器实例（启动开销大）
 - **网络代理**：避免被目标网站封 IP（用住宅代理）
 - **失败隔离**：单条 trajectory 崩溃不影响其他

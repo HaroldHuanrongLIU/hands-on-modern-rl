@@ -4,9 +4,9 @@ search: false
 
 # Old Page: Trajectory Synthesis and Data Engineering (Merged into 10.2)
 
-> This page is kept as an entry point for old links. The core content has already been merged into [10.2 Tool Use, Trajectory Synthesis, and Agentic Engineering](./tool-use-and-trajectory). The original content is preserved below for readers who arrive through legacy links and want a point of comparison.
+> This page is kept as an entry point for old links. The core content has already been merged into [22.2 Tool Use, Trajectory Synthesis, and Agentic Engineering](./tool-use-and-trajectory). The original content is preserved below for readers who arrive through legacy links and want a point of comparison.
 
-# 12.2 Trajectory Synthesis: Where Training Data Comes From
+# 22.10 Trajectory Synthesis: Where Training Data Comes From
 
 In the previous section, we unpacked the credit assignment problem in multi-turn RL. Before training even begins, however, there is an even more basic question: **where does the data come from?** Standard LLM RL, such as the GRPO setting in Chapter 9, only needs a prompt plus a verifiable answer. The model generates its own response and compares it against the verifier; no external interaction data is required. Agentic RL is different. The model must interact with an environment: calling tools, executing code, browsing the web, and observing results. These interactions produce "trajectories", which are both the training data and the source of reward. The quality of those trajectories determines the ceiling of the model. In this section, we examine the data-engineering core of Agentic RL: trajectory synthesis.
 
@@ -248,7 +248,7 @@ Not necessarily. Rejection sampling keeps all successful trajectories, but "succ
 
 Consider a factual search task. The model uses a very inefficient strategy: it first searches 5 unrelated keywords, then happens to find the answer on the sixth search. This trajectory "succeeds", but the first 5 searches are completely useless. If we train on it, the model may learn the inefficient strategy that "if you search enough times, you will eventually find it".
 
-This is why "efficiency evaluation" matters in trajectory quality control. We should not only ask whether the final result is correct, but also whether the path to success is efficient. The reward design in Section 10.3 introduces efficiency penalties, which are essentially meant to solve this problem.
+This is why "efficiency evaluation" matters in trajectory quality control. We should not only ask whether the final result is correct, but also whether the path to success is efficient. The reward design in Section 22.3 introduces efficiency penalties, which are essentially meant to solve this problem.
 
 </details>
 

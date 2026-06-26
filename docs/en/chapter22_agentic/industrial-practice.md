@@ -4,9 +4,9 @@ search: false
 
 # Legacy Page: Industrial Practice (Merged into 10.3)
 
-> This page is kept as an entry point for legacy links. The core content has already been merged into [10.3 Industrial Practice, Evaluation, and Badcases](./industrial-evaluation). The original content is retained below so readers arriving through old links can compare it with the new chapter.
+> This page is kept as an entry point for legacy links. The core content has already been merged into [22.3 Industrial Practice, Evaluation, and Badcases](./industrial-evaluation). The original content is retained below so readers arriving through old links can compare it with the new chapter.
 
-# 12.5 Industrial Practice: Common Problems and Solutions in Agentic RL Training
+# 22.4 Industrial Practice: Common Problems and Solutions in Agentic RL Training
 
 The previous sections introduced the general engineering principles and framework design of Agentic RL. In real training, however, researchers often run into a series of engineering problems: unstable training, uncontrolled output length, reward metrics that drift away from actual quality, and so on. These issues are usually not discussed in detail in academic papers, but they are crucial in engineering practice.
 
@@ -303,4 +303,4 @@ The table below summarizes the corresponding solutions for each problem:
 
 ---
 
-This section reviewed common engineering problems in Agentic RL training and the corresponding solutions used in industry. The next section moves to [Section 10.3: Industrial Practice, Evaluation, and Badcases](./industrial-evaluation), where we examine how to use benchmarks, evaluation pipelines, and badcase attribution to judge whether an agent has truly improved.
+This section reviewed common engineering problems in Agentic RL training and the corresponding solutions used in industry. The next section moves to [Section 22.3: Industrial Practice, Evaluation, and Badcases](./industrial-evaluation), where we examine how to use benchmarks, evaluation pipelines, and badcase attribution to judge whether an agent has truly improved.

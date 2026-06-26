@@ -1,4 +1,4 @@
-# 12.4 Self-play SWE-RL 与工业落地
+# 23.3 Self-play SWE-RL 与工业落地
 
 至此我们讨论了 SWE-RL 的三个支柱：
 
@@ -290,7 +290,7 @@ Reviewer Agent: 检查代码质量
 - **通信协议**：agent 间如何传递信息
 - **共享 value model**：评估整体 trajectory 质量
 
-这是 [第 10 章 Agentic RL 多智能体部分](../chapter22_agentic/build-agentic-training-system) 在 SWE 领域的具体应用。
+这是 [第 22 章 Agentic RL 多智能体部分](../chapter22_agentic/build-agentic-training-system) 在 SWE 领域的具体应用。
 
 ## 本章总结
 

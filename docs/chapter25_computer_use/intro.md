@@ -1,6 +1,6 @@
 # 第 25 章 · Computer Use 与 GUI Agent
 
-> [第 10 章 Agentic RL](../chapter22_agentic/intro) 让 LLM 学会调用工具、阅读工具返回、在多轮交互中纠错——这是单 agent 的形态。但当任务从"写一段函数"升级到"在我电脑里订一张下周三去上海的机票"，agent 必须跨过的鸿沟是：**像人一样看屏幕、点鼠标、敲键盘**。本章解决两件事：(1) Computer Use 范式下，agent 如何把 GUI 像素流映射为原子动作并用 RL 优化（25.1–25.2）；(2) GUI Agent 的训练实践（[25.2](./training)）与安全防御（[25.3](./safety-swarm)）。
+> [第 22 章 Agentic RL](../chapter22_agentic/intro) 让 LLM 学会调用工具、阅读工具返回、在多轮交互中纠错——这是单 agent 的形态。但当任务从"写一段函数"升级到"在我电脑里订一张下周三去上海的机票"，agent 必须跨过的鸿沟是：**像人一样看屏幕、点鼠标、敲键盘**。本章解决两件事：(1) Computer Use 范式下，agent 如何把 GUI 像素流映射为原子动作并用 RL 优化（25.1–25.2）；(2) GUI Agent 的训练实践（[25.2](./training)）与安全防御（[25.3](./safety-swarm)）。
 
 ## 25.1 Computer Use 范式
 
@@ -16,13 +16,13 @@
 
 ### 主流产品
 
-| 产品 | 机构 | 发布 | 特征 |
-|------|------|------|------|
-| **Computer Use** | Anthropic | 2024.10 | Claude 3.5 Sonnet 原生支持截图-动作对 |
-| **Operator** | OpenAI | 2025.01 | CU Agent + GPT-4o 视觉，浏览器专用 |
-| **Project Mariner** | Google | 2024.12 | Gemini 驱动，深度集成 Chrome |
-| **UI-TARS-2** | ByteDance Seed | 2025.09 | 端到端 VLM + RL 训练 |
-| **Open-AutoGLM** | 智谱 | 2025.12 | 开源 AutoGLM 升级版 |
+| 产品                | 机构           | 发布    | 特征                                  |
+| ------------------- | -------------- | ------- | ------------------------------------- |
+| **Computer Use**    | Anthropic      | 2024.10 | Claude 3.5 Sonnet 原生支持截图-动作对 |
+| **Operator**        | OpenAI         | 2025.01 | CU Agent + GPT-4o 视觉，浏览器专用    |
+| **Project Mariner** | Google         | 2024.12 | Gemini 驱动，深度集成 Chrome          |
+| **UI-TARS-2**       | ByteDance Seed | 2025.09 | 端到端 VLM + RL 训练                  |
+| **Open-AutoGLM**    | 智谱           | 2025.12 | 开源 AutoGLM 升级版                   |
 
 ### 核心动作空间
 
@@ -108,14 +108,14 @@ UI-TARS-2 把这个思想推到极致：把思维链（thought）、动作（act
 def ui_tars_forward(self, screenshot, task):
     # 编码图像
     visual_tokens = self.vision_encoder(screenshot)  # [B, N_vis, d]
-    
+
     # 拼接 prompt
     prompt = f"<task>{task}</task>\n<image>{visual_tokens}</image>\n"
-    
+
     # 自回归生成 thought + action + coord
     # 关键：coord 用特殊 token <coord_x> <coord_y> 包裹
     output = self.llm.generate(prompt, max_new_tokens=256)
-    
+
     # 解析输出："<thought>...</thought>\n<action>click</action>\n<coord>(0.45, 0.62)</coord>"
     thought, action, coord = parse_action(output)
     return thought, action, coord
@@ -136,7 +136,7 @@ class GUIEnv:
         self.vm.restore_snapshot(task_id)  # 恢复虚拟机到任务初始状态
         self.task = self.tasks[task_id]
         return self.screenshot()
-    
+
     def step(self, action):
         self.vm.execute(action)            # 鼠标键盘事件注入
         obs = self.screenshot()

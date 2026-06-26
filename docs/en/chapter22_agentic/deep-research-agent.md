@@ -1,8 +1,8 @@
 ---
-title: 10.7 Deep Research
+title: 22.7 Deep Research
 ---
 
-# 10.5 Deep Research
+# 22.5 Deep Research
 
 Previous sections discussed multi-turn RL credit assignment, trajectory synthesis, and tool-use training for Web Agents and Code Agents. Now we look at an application that integrates all of these: the **Deep Research Agent**. Its goal is to make AI behave like a human researcher — autonomously conducting long-horizon, multi-step information search, analysis, and synthesis, ultimately outputting a trustworthy research report.
 
@@ -263,7 +263,7 @@ The two models work collaboratively through self-play — the searcher locates i
 
 ## Evaluation: What Counts as "Good" Deep Research?
 
-> This section focuses on evaluation dimensions specific to the Deep Research scenario. The broader Agentic evaluation system (including tool use, end-to-end tasks, comprehensive capability benchmark panoramas, and evaluation system construction) is in [Section 10.3: Industrial Practice, Evaluation, and Badcases](./industrial-evaluation).
+> This section focuses on evaluation dimensions specific to the Deep Research scenario. The broader Agentic evaluation system (including tool use, end-to-end tasks, comprehensive capability benchmark panoramas, and evaluation system construction) is in [Section 22.3: Industrial Practice, Evaluation, and Badcases](./industrial-evaluation).
 
 A Deep Research Agent's "goodness" goes far beyond final answer correctness. An excellent Deep Research result must simultaneously satisfy four levels:
 
@@ -428,7 +428,7 @@ def report_reward(report, task, verified_facts=None):
     )
 ```
 
-During training, it is recommended to use **short-to-long curriculum learning** — first train on 500-word short reports, then gradually increase to 5,000-word complete reports. This is consistent with Section 10.2 HardGen's[^hardgen] difficulty-adaptive approach.
+During training, it is recommended to use **short-to-long curriculum learning** — first train on 500-word short reports, then gradually increase to 5,000-word complete reports. This is consistent with Section 22.2 HardGen's[^hardgen] difficulty-adaptive approach.
 
 ### Two-Stage RL for Deep Research
 
@@ -747,7 +747,7 @@ flowchart TD
 
 Search-returned tokens (the `<information>` part) are **masked out** when computing RL loss — only model-generated tokens participate in gradient updates. The reason is intuitive: search result quality is not controlled by the model, so the model should not be penalized for low-quality search engine results.
 
-This is consistent with the Agent Loop design principles discussed in [Section 10.1](./intro): **environment feedback doesn't change policy; only the policy's own decisions change policy.**
+This is consistent with the Agent Loop design principles discussed in [Section 22.1](./intro): **environment feedback doesn't change policy; only the policy's own decisions change policy.**
 
 #### Reward Function
 
@@ -882,7 +882,7 @@ def rollout(model, question, retriever, max_turns=10):
 # - Tokens between <answer>...</answer> -> mask=1 (model output)
 ```
 
-This is consistent with the Agent Loop discussed in [Section 10.1](./intro): environment-returned observations should not affect policy gradients.
+This is consistent with the Agent Loop discussed in [Section 22.1](./intro): environment-returned observations should not affect policy gradients.
 
 ### Reproduction Results Report Template
 
@@ -934,8 +934,8 @@ Search-R1 is the concrete implementation of all RL knowledge from previous chapt
 
 - **RLVR (Chapter 9)**: Search-R1's reward is purely "is the answer correct," requiring no Reward Model — this is exactly RLVR's core idea.
 - **GRPO (Chapter 9)**: Search-R1 defaults to GRPO, with group sampling + relative comparison replacing PPO's Critic network.
-- **Agent Loop (Section 10.1)**: Search-R1's Rollout is the concrete implementation of the Agent Loop — the model alternates between reasoning and tool calls.
-- **ORM vs PRM (Section 10.1)**: Search-R1 only uses ORM (terminal reward). Atom-Searcher[^atom_searcher] and Web-Shepherd[^web_shepherd] add PRM (process rewards) on top.
+- **Agent Loop (Section 22.1)**: Search-R1's Rollout is the concrete implementation of the Agent Loop — the model alternates between reasoning and tool calls.
+- **ORM vs PRM (Section 22.1)**: Search-R1 only uses ORM (terminal reward). Atom-Searcher[^atom_searcher] and Web-Shepherd[^web_shepherd] add PRM (process rewards) on top.
 - **Retrieved Token Masking**: Consistent with the idea of masking prompt tokens in PPO — only do gradient updates on policy-controllable parts.
 
 </details>

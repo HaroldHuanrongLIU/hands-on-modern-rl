@@ -4,9 +4,9 @@ search: false
 
 # Legacy Page: Tool Use and Agentic Engineering (Merged into 10.2)
 
-> This page is kept as an entry point for old links. The core content has been merged into [10.2 Tool Use, Trajectory Synthesis, and Agentic Engineering](./tool-use-and-trajectory). The original material is preserved below so readers arriving from older links can still compare it with the new section.
+> This page is kept as an entry point for old links. The core content has been merged into [22.2 Tool Use, Trajectory Synthesis, and Agentic Engineering](./tool-use-and-trajectory). The original material is preserved below so readers arriving from older links can still compare it with the new section.
 
-# 12.3 Tool-Use RL: Web Agents and Code Agents
+# 22.3 Tool-Use RL: Web Agents and Code Agents
 
 In the previous section, we unpacked the credit assignment problem in multi-turn RL: if a seven-turn interaction fails, which step should we blame? Now we turn to another key question: how does a model learn to "use tools"? Supervised fine-tuning (SFT) can teach a model what the JSON format of a tool call looks like, but it cannot reliably teach the model when to call a tool, which tool to call, or how to combine several tools. Those are strategic decisions, and this is exactly where RL is strong.
 
@@ -594,7 +594,7 @@ Agentic RL did not appear from nowhere. It connects to almost every concept cove
 
 Experience replay in agentic RL is more subtle than in standard DQN. DQN can reuse old data directly because the environment is deterministic in the relevant sense: CartPole physics does not change. In agentic RL, tool execution results may change over time, for example search engine results are updated. Old trajectories may no longer be valid. This means experience replay for agentic RL needs an **expiration mechanism**: old trajectories should be discarded after enough time has passed or after the environment state has changed.
 
-After training, how do you know whether your agent is actually good? Evaluation and benchmarks are large topics in agentic RL: from tool-call leaderboards to end-to-end task benchmarks, from evaluation-pipeline construction to closed loops where evaluation drives training improvement. We discuss these together in **[Section 10.3: Industrial Practice, Evaluation, and Bad Cases](./industrial-evaluation)**.
+After training, how do you know whether your agent is actually good? Evaluation and benchmarks are large topics in agentic RL: from tool-call leaderboards to end-to-end task benchmarks, from evaluation-pipeline construction to closed loops where evaluation drives training improvement. We discuss these together in **[Section 22.3: Industrial Practice, Evaluation, and Bad Cases](./industrial-evaluation)**.
 
 ## Agent Reward Design and Evaluation Systems
 
@@ -659,7 +659,7 @@ Allen AI's DR Tulu proposed **RLER[^rler_eng]** (Reinforcement Learning with Evo
 - **Middle training**: the model becomes more reliable, so tighten the criteria. Now the answer should be mostly correct and citations should be at least partially verifiable.
 - **Late training**: the model is already strong, so use strict criteria for refinement. Require precise correctness, verifiable citations, and an efficient process.
 
-RLER is implemented by maintaining a versioned library of scoring criteria. Every $N$ training steps, the strictness of the criteria is adjusted according to the model's current performance. This resembles curriculum learning from Section 10.2, but in RLER, the **scoring criteria evolve**, rather than the task difficulty increasing.
+RLER is implemented by maintaining a versioned library of scoring criteria. Every $N$ training steps, the strictness of the criteria is adjusted according to the model's current performance. This resembles curriculum learning from Section 22.2, but in RLER, the **scoring criteria evolve**, rather than the task difficulty increasing.
 
 ### Tool-Aware Reward Design: ToolRL
 

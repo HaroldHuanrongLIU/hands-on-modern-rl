@@ -1,8 +1,8 @@
 ---
-title: '10.5 Hands-On: rLLM DeepCoder'
+title: '22.5 Hands-On: rLLM DeepCoder'
 ---
 
-# 10.4 Hands-On: Training a DeepCoder Agent with rLLM
+# 22.4 Hands-On: Training a DeepCoder Agent with rLLM
 
 The previous sections covered the conceptual framework of Agentic RL—rollouts, credit assignment, tool use, and evaluation. Now it is time for hands-on work: **use an industrial-grade framework (rLLM) to run the full RL training pipeline for a code-generation agent—from what the data looks like, to how training runs, to how to judge whether the results are good or bad.**
 
@@ -854,7 +854,7 @@ Also an rLLM cookbook, FinQA (financial analysis agent) uses a completely differ
 | Cost                | Zero                          | ~$0.01-0.05 per evaluation                            |
 | Use case            | Code, math (verifiable tasks) | Finance, research (tasks needing subjective judgment) |
 
-Code tasks need only the simplest RLVR; tasks requiring semantic understanding need more complex reward design (see Section 10.1's discussion of ORM vs PRM).
+Code tasks need only the simplest RLVR; tasks requiring semantic understanding need more complex reward design (see Section 22.1's discussion of ORM vs PRM).
 :::
 
 ## What to Explore from DeepCoder

@@ -1,60 +1,10 @@
 ---
-title: 10.1 Multi-Turn RL and Credit Assignment
+title: 22.1 Multi-Turn RL and Credit Assignment
 ---
 
-# 10.1 Multi-Turn RL and Credit Assignment
+# 22.1 Multi-Turn RL and Credit Assignment
 
-In the previous chapter, we saw how GRPO uses verifiable rewards to train the reasoning ability of large models. But that is still "single-turn": the model generates a complete answer in one pass, and the final result is scored. Real agents do not work this way. A truly useful agent needs to **act across multiple consecutive steps**: search for information, execute code, observe the result, and adjust its strategy. Each step may change the direction of all later steps, while the reward signal often appears only at the end. In this section, we will unpack this new RL paradigm.
-
-## From Single-Turn to Multi-Turn: Not Just "Taking More Steps"
-
-The difference between single-turn RL and multi-turn RL is not simply that "one step becomes seven steps." It changes the entire structure of the RL problem. Let us use a concrete example to feel the change:
-
-```mermaid
-flowchart LR
-    subgraph "Single-Turn RL"
-        S1["User question"] --> M1["Model generates complete answer"] --> R1["Reward Model score"]
-    end
-
-    subgraph "Multi-Turn Agentic RL"
-        S2["User question"] --> A1["Call search tool"]
-        A1 --> O1["Observe search results"]
-        O1 --> A2["Generate code"]
-        A2 --> O2["Execute code"]
-        O2 --> A3["Observe error"]
-        A3 --> A4["Fix code"]
-        A4 --> O3["Execution succeeds"]
-        O3 --> R2["Final Reward"]
-    end
-
-    style S1 fill:#e3f2fd,stroke:#1976d2,color:#000
-    style S2 fill:#fff3e0,stroke:#f57c00,color:#000
-    style R1 fill:#e8f5e9,stroke:#388e3c,color:#000
-    style R2 fill:#e8f5e9,stroke:#388e3c,color:#000
-```
-
-On the surface, the difference is "more steps." But mathematically, there are three fundamental changes.
-
-**The action space expands.** In single-turn RL, the model has only one kind of action: generating the next token. In multi-turn RL, the model must choose among multiple heterogeneous actions: should it continue generating text, call a search tool, or execute a piece of code? These actions are completely different in type, so they cannot be naively concatenated into one large action space.
-
-**Rewards are delayed.** In single-turn RL, the model receives a reward as soon as it finishes generating the answer. In a multi-turn setting, the final result may appear only after seven rounds of interaction, with no feedback in the middle. The model must learn to make correct decisions under "no immediate feedback."
-
-**Credit assignment becomes harder.** This is the central challenge. Suppose a seven-turn interaction ultimately fails. Was the search query in turn 2 wrong? Was there a bug in the code at turn 5? Or did the repair direction in turn 6 go completely off track? Given a single final "failure" signal, how should we distribute responsibility across seven steps?
-
-## Agentic MDP: Modeling an Agent
-
-Let us formalize the problem using the MDP framework from Chapter 3. An agentic system can be modeled as a special MDP:
-
-- **State $s_t$**: the current conversation history, the results returned by tools that have already been called, and the current environment state. Notice that this state **grows cumulatively**: after every turn, the state gains another segment of history. This differs from the usual "state transition" in a standard MDP; it is closer to an ever-expanding context window.
-- **Action $a_t$**: generate text, call tool A, call tool B, and so on. The action space is **heterogeneous**: different action types have completely different effects and constraints.
-- **Transition $P(s_{t+1}|s_t, a_t)$**: the environment response. When the model chooses to "call the search tool," the returned search results are not controllable. Search for the same phrase today and tomorrow, and the results may differ. This is the environment's "dynamics."
-- **Reward $r(s_t, a_t)$**: rewards for intermediate steps are usually 0, and only the final result gives 1 for success or 0 for failure. This is an extremely **sparse** reward signal.
-
-$$R_{\text{total}} = \sum_{t=1}^{T} \gamma^t \cdot r_t$$
-
-Here $T$ is the total number of turns, $\gamma$ is the discount factor, and $r_t$ is the immediate reward at turn $t$. In most agentic scenarios, only $r_T$ is nonzero, namely the reward for the final result; the intermediate rewards $r_1, r_2, \ldots, r_{T-1}$ are all 0.
-
-This is exactly the same difficulty REINFORCE faced in Chapter 5: $G_t$ includes all randomness from the current step to the end, so its variance is very large. The difference is that now each step is no longer a simple "choose left or choose right"; it is "decide which tool to call and what content to generate," which raises the complexity by several orders of magnitude.
+The Chapter 22 [intro](./intro) already established the overall framework of Agentic RL: the paradigm shift from single-turn to multi-turn, the four components of an agent, POMDP formalization, and the idea of breaking a trajectory-level reward back down into step-level advantages. This section dives into that decomposition—**how credit assignment is actually done**.
 
 ## Credit Assignment: Seven Turns Failed, Who Is to Blame?
 

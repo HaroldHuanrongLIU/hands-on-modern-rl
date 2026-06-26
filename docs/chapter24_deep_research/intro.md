@@ -1,4 +1,4 @@
-# 10.5 项目二 与 深度研究智能体 Deep Research Agent
+# 第 24 章 Deep Research 与浏览器智能体 Deep Research Agent
 
 前面几节我们讨论了多轮 RL 的信用分配、轨迹合成、以及 Web Agent / Code Agent 的工具调用训练。现在我们来看一个把这些技术**全部整合在一起**的前沿应用——Deep Research Agent（深度研究智能体）。它的目标是让 AI 像人类研究员一样，自主进行长程、多步的信息搜索、分析和综合，最终输出一份可信赖的研究报告。
 
